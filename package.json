@@ -1,24 +1,38 @@
 {
-    "name": "Todoist",
-    "main": "src/main.js",
-    "author": "Ruslan Bekenev <furyinbox@gmail.com>",
-    "build": {
-        "appId": "com.krydos.todoist",
-        "directories": {
-            "app": "src"
-        },
-        "win": {
-            "target": "portable"
-        },
-        "linux": {
-            "target": [
-                "deb",
-                "rpm"
-            ],
-            "category": "Utility;Productivity;"
-        }
+  "name": "Todoist",
+  "version": "1.12.0",
+  "description": "Todoist for linux",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/KryDos/todoist-linux",
+  "keywords": [
+    "todoist",
+    "productivity",
+    "gtd"
+  ],
+  "author": "Ruslan Bekenev <furyinbox@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^4.0.4",
+    "electron-window-state": "^5.0.3",
+    "electron-builder": "^20.10.0"
+  },
+  "build": {
+    "appId": "com.krydos.todoist",
+    "directories": {
+      "app": "src"
     },
-    "devDependencies": {
-        "electron-builder": "^20.10.0"
+    "win": {
+      "target": "portable"
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "rpm"
+      ],
+      "category": "Utility;Productivity;"
     }
+  }
 }
