@@ -2,7 +2,9 @@ const { app, BrowserWindow, Tray, Menu } = require("electron");
 const windowStateKeeper = require("electron-window-state");
 const path = require("path");
 
-let mainWindow;
+const createMainMenu = require("./menu");
+
+let win;
 let tray = null;
 
 function createWindow() {
@@ -11,7 +13,7 @@ function createWindow() {
     defaultHeight: 600
   });
 
-  mainWindow = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -24,11 +26,17 @@ function createWindow() {
     }
   });
 
-  mainWindow.loadURL("https://todoist.com/app");
+  win.loadURL("https://todoist.com/app");
 
-  mainWindow.on("closed", function() {
-    mainWindow = null;
+  win.on("closed", function() {
+    win = null;
   });
+
+  // manage size/positiod of the window
+  // so it can be restored next time
+  mainWindowState.manage(win);
+
+  createMainMenu();
 }
 
 function createTray() {
@@ -37,8 +45,8 @@ function createTray() {
     {
       label: "Show",
       click: function() {
-        mainWindow.show();
-        mainWindow.focus();
+        win.show();
+        win.focus();
       }
     },
     {
@@ -65,7 +73,7 @@ app.on("window-all-closed", function() {
 });
 
 app.on("activate", function() {
-  if (mainWindow === null) {
+  if (win === null) {
     createWindow();
   }
 });
