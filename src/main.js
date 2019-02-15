@@ -3,9 +3,11 @@ const windowStateKeeper = require("electron-window-state");
 const path = require("path");
 
 const createMainMenu = require("./menu");
+const Shortcuts = require("./shortcuts/shortcuts");
 
 let win;
 let tray = null;
+let shortcutsInstance;
 
 function createWindow() {
   let mainWindowState = windowStateKeeper({
@@ -28,8 +30,18 @@ function createWindow() {
 
   win.loadURL("https://todoist.com/app");
 
+  win["currentWindowState"] = "shown";
+
   win.on("closed", function() {
     win = null;
+  });
+
+  win.on("hide", function() {
+    win["currentWindowState"] = "hidden";
+  });
+
+  win.on("show", function() {
+    win["currentWindowState"] = "shown";
   });
 
   // manage size/positiod of the window
@@ -37,6 +49,8 @@ function createWindow() {
   mainWindowState.manage(win);
 
   createMainMenu();
+
+  shortcutsInstance = new Shortcuts(win);
 }
 
 function createTray() {
@@ -64,9 +78,12 @@ function createTray() {
 app.on("ready", () => {
   createWindow();
   createTray();
+  shortcutsInstance.registerAllShortcuts();
 });
 
 app.on("window-all-closed", function() {
+  shortcutsInstance.unregisterAllShortcuts();
+
   if (process.platform !== "darwin") {
     app.quit();
   }
