@@ -1,10 +1,11 @@
 {
-  "name": "Todoist",
+  "name": "todoist",
   "version": "1.12.0",
   "description": "Todoist for linux",
   "main": "src/main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder"
   },
   "repository": "https://github.com/KryDos/todoist-linux",
   "keywords": [
@@ -20,10 +21,10 @@
     "electron-builder": "^20.10.0"
   },
   "build": {
+    "files": [
+      "**/*"
+    ],
     "appId": "com.krydos.todoist",
-    "directories": {
-      "app": "src"
-    },
     "win": {
       "target": "portable"
     },

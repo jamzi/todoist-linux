@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Tray, Menu } = require("electron");
+const { app, BrowserWindow, Tray, Menu, shell } = require("electron");
 const windowStateKeeper = require("electron-window-state");
 const path = require("path");
 
@@ -48,6 +48,8 @@ function createWindow() {
   // so it can be restored next time
   mainWindowState.manage(win);
 
+  win.webContents.on("new-window", handleRedirect);
+
   createMainMenu();
 
   shortcutsInstance = new Shortcuts(win);
@@ -73,6 +75,41 @@ function createTray() {
   ]);
   tray.setToolTip("Todoist");
   tray.setContextMenu(contextMenu);
+}
+
+function handleRedirect(e, url) {
+  // there may be some popups on the same page
+  if (url == win.webContents.getURL()) {
+    return true;
+  }
+
+  // when user is logged in there is link
+  // asks to update the page. It should be opened
+  // in the app and not in the external browser
+  if (url == "https://todoist.com/app") {
+    win.reload();
+    return true;
+  }
+
+  /**
+   * In case of google's oauth login
+   * let's create another window and listen for
+   * its "close" event.
+   * As soon as that event fired we can refresh our
+   * main window.
+   */
+  if (/google.+?oauth/.test(url)) {
+    e.preventDefault();
+    gOauthWindow = new BrowserWindow();
+    gOauthWindow.loadURL(url);
+    gOauthWindow.on("close", () => {
+      win.reload();
+    });
+    return true;
+  }
+
+  e.preventDefault();
+  shell.openExternal(url);
 }
 
 app.on("ready", () => {
